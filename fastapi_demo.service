@@ -5,8 +5,8 @@ After=network.target
 [Service]
 User=viktor-shved
 Group=www-data
-WorkingDirectory=/home/viktor-shved/fastapi_demo
-ExecStart=/home/viktor-shved/fastapi_demo/venv/bin/gunicorn -c gunicorn_conf.py app:app
+WorkingDirectory=/home/viktor-shved/nana_fastapi
+ExecStart=/home/viktor-shved/nana_fastapi/venv/bin/gunicorn -c gunicorn_conf.py app:app
 
 [Install]
 WantedBy=multi-user.target

@@ -6,6 +6,7 @@ After=network.target
 User=viktor-shved
 Group=www-data
 WorkingDirectory=/home/viktor-shved/nana_fastapi
+Environment="PATH=/home/viktor-shved/nana_fastapi/venv/bin"
 ExecStart=/home/viktor-shved/nana_fastapi/venv/bin/gunicorn -c gunicorn_conf.py app:app
 
 [Install]

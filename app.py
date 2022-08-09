@@ -124,6 +124,6 @@ async def OrderCreate(order: RequestOrder):
     a = settings
     dat = datetime.date.today()
     resp = OrderResponce(order_id=f"{dat.strftime('%y%m%d')}-{randint(100000, 999999)}")
-    query = orders.insert().values(order_id=resp.order_id, created_order_id=order.created_order_id, status='NEW')
-    last_record_id = await database.execute(query)
+    #query = orders.insert().values(order_id=resp.order_id, created_order_id=order.created_order_id, status='NEW')
+    #last_record_id = await database.execute(query)
     return resp

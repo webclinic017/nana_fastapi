@@ -10,7 +10,6 @@ httptools==0.4.0
 idna==3.3
 Mako==1.2.1
 MarkupSafe==2.1.1
-psycopg2==2.9.3
 pydantic==1.9.1
 python-dotenv==0.20.0
 PyYAML==6.0

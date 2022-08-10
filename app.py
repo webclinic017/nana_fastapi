@@ -297,7 +297,7 @@ class CancelOrderRequest(BaseModel):
         return CancelOrderRequest(order_id='3422b448-2460-4fd2-9183-8000de6f8343')
 
 
-@app.post('/lavka/v1/integration-entry/v1/order/actions/cancel', response_model=CancelOrderRequest, status_code=202, responses={400: {'model': EmptyResponse}, 404: {'model': EmptyResponse}}, name='Order Cancel')
+@app.post('/lavka/v1/integration-entry/v1/order/actions/cancel', response_model=EmptyResponse, status_code=202, responses={400: {'model': EmptyResponse}, 404: {'model': EmptyResponse}}, name='Order Cancel')
 async def OrderState(order: CancelOrderRequest):
     """
     Cancel the order
@@ -334,7 +334,7 @@ class SetPaymentStatus(BaseModel):
     payment_status: Optional[payment_status]
     payment_type: Optional[PaymentType] = Field(description='Payment related to an order')
 
-@app.post('/lavka/v1/integration-entry/v1/order/set-payment-status', response_model=OrdersStateResponse, responses={404: {'model': EmptyResponse, 'name': 'Order not found'}}, name='Set Payment Status')
+@app.post('/lavka/v1/integration-entry/v1/order/set-payment-status', response_model=EmptyResponse, responses={404: {'model': EmptyResponse, 'name': 'Order not found'}}, name='Set Payment Status')
 async def OrderState(order: SetPaymentStatus):
     """
     Set Payment Status

@@ -44,9 +44,9 @@ def token_required(func):
     async def wrapper(*args, request: Request, **kwargs):
         token = request.headers.get('authorization')
         if token:
-            if not settings.wms_token in token.split():
+            if not wms_token in token.split():
                 print(token)
-                raise RequestValidationError(f'Wrong token {token} \n need:{settings.wms_token}')
+                raise RequestValidationError(f'Wrong token {token} \n need:{wms_token}')
         # my_header will be now available in decorator
         return await func(*args, request, **kwargs)
     return wrapper

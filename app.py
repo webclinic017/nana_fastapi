@@ -303,7 +303,7 @@ async def OrderState(order: CancelOrderRequest):
     Cancel the order
     """
 
-    return return JSONResponse({})
+    return JSONResponse({})
 
 
 class ContactObtainRequest(BaseModel):

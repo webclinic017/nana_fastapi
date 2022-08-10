@@ -4,7 +4,7 @@ from fastapi.exceptions import RequestValidationError
 from asyncpg.exceptions import UniqueViolationError
 from models.database import database
 from functools import wraps
-from conf.config import settings
+from conf.config import settings, wms_url, wms_token
 from models.product import products
 from shemas.jobs import Product
 from typing import List
@@ -18,10 +18,10 @@ async def sync_product_from_wms():
         "locale": "saudi_arabica"
     }
     async with aiohttp.ClientSession(
-            headers={'Authorization': f'Bearer {settings.wms_token}'}) as session:
+            headers={'Authorization': f'Bearer {wms_token}'}) as session:
         while body.get('cursor'):
             async with session.post(
-                    f'{settings.wms_url}/api/external/products/v1/products',
+                    f'{wms_url}/api/external/products/v1/products',
                     json=body,
                     verify_ssl=False) as resp:
                 resp = await resp.json()

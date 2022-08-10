@@ -32,7 +32,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         status_code=status.HTTP_400_BAD_REQUEST,
         content=jsonable_encoder({
             "code": "bad_request",
-            "message": str(exc.errors()),
+            "message": str(exc),
             "details": {
                 "cart": None,
                 "retry_after": 5

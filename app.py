@@ -185,7 +185,7 @@ class OrderResolution(str, Enum):
 
 class OrdersStateRequest(BaseModel):
     user_id: Optional[str]
-    known_orders: list[str]
+    known_orders: List[str]
 
 class OrderActionType(str, Enum):
     cancel = 'cancel'

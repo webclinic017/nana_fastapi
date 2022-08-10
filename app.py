@@ -15,7 +15,7 @@ import uvicorn
 from models.order import orders
 from asyncpg.exceptions import UniqueViolationError
 
-app = FastAPI(title='B2B Api stub', description='B2B swagger')
+app = FastAPI(title='B2B Api stub', description='This stub is designed to test the functionality of sending messages for integration with yango')
 
 @app.on_event("startup")
 async def startup():

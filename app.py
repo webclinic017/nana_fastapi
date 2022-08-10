@@ -128,6 +128,14 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.post('/lavka/v1/integration-entry/v1/order/submit', response_model=OrderResponce)
 async def OrderCreate(order: RequestOrder):
+    """
+    Creating an order in the yango infrastructure
+    Need to pass the main parameters,
+    - the client,
+    - location,
+    - information about the basket,
+    - and other parameters
+    """
     dat = datetime.date.today()
     resp = OrderResponce(order_id=f"{dat.strftime('%y%m%d')}-{randint(100000, 999999)}")
 

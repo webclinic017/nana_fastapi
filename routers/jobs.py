@@ -45,7 +45,6 @@ def token_required(func):
         token = request.headers.get('authorization')
         if token:
             if not wms_token in token.split():
-                print(token)
                 raise RequestValidationError(f'Wrong token')
         # my_header will be now available in decorator
         return await func(*args, request, **kwargs)
@@ -59,7 +58,7 @@ async def sync_products(request: Request, background_tasks: BackgroundTasks):
     return {"message": "Notification sent in the background"}
 
 
-@router.get("/get-products", name='Get all products', response_model=List[Product])
+@router.get("/get-products",name='Get all products', response_model=List[Product])
 @token_required
 async def get_products(request: Request):
     query = products.select()

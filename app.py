@@ -11,6 +11,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, validator, constr
 from conf.config import settings
 from models.database import database
+import uvicorn
 from models.order import orders
 
 app = FastAPI()
@@ -127,3 +128,6 @@ async def OrderCreate(order: RequestOrder):
     #query = orders.insert().values(order_id=resp.order_id, created_order_id=order.created_order_id, status='NEW')
     #last_record_id = await database.execute(query)
     return resp
+
+if __name__ == '__main__':
+    uvicorn.run('app:app')

@@ -113,6 +113,15 @@ class OrderResponce(BaseModel):
     order_id: str
     newbie:  bool = False
 
+class OrderValidationErrorDetails(BaseModel):
+    cart: None
+    retry_after: int
+
+class OrderValidationError(BaseModel):
+    code: str
+    message:  str
+    details: OrderValidationErrorDetails
+
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     return JSONResponse(
@@ -126,7 +135,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             }})
     )
 
-@app.post('/lavka/v1/integration-entry/v1/order/submit', response_model=OrderResponce)
+@app.post('/lavka/v1/integration-entry/v1/order/submit', response_model=OrderResponce, responses={400: {'model': OrderValidationError}})
 async def OrderCreate(order: RequestOrder):
     """
     Creating an order in the yango infrastructure

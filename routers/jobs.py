@@ -46,7 +46,7 @@ def token_required(func):
         if token:
             if not wms_token in token.split():
                 print(token)
-                raise RequestValidationError(f'Wrong token {token} \n need:{wms_token}')
+                raise RequestValidationError(f'Wrong token')
         # my_header will be now available in decorator
         return await func(*args, request, **kwargs)
     return wrapper

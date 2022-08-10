@@ -47,18 +47,18 @@ class CartItem(BaseModel):
     """
     id: str = Field(description='Partner item id')
     quantity: Numeric = Field(description='Item quantity - Basically Decimal<4>')
-    full_price: constr(regex=r'^\d+(\.\d*)?$') = Field(description='Basic price of an item')
+    full_price: Numeric = Field(description='Basic price of an item')
     title: Optional[str] = Field(description='Item title')
-    stack_price: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Resulting price of a full stack')
-    stack_full_price: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Basic price of a full stack')
+    stack_price: Optional[Numeric] = Field(description='Resulting price of a full stack')
+    stack_full_price: Optional[Numeric] = Field(description='Basic price of a full stack')
 
     class Config:
         title = 'Cart item'
 
 class Cart(BaseModel):
     items: List[CartItem] = Field(description='Items in a cart')
-    cart_total_cost: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Total cost - Basically Decimal<4>')
-    cart_total_discount: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Total discount - Basically Decimal<4>')
+    cart_total_cost: Optional[Numeric] = Field(description='Total cost - Basically Decimal<4>')
+    cart_total_discount: Optional[Numeric] = Field(description='Total discount - Basically Decimal<4>')
 
 
 class PaymentType(str, Enum):

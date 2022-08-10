@@ -47,7 +47,7 @@ class CartItem(BaseModel):
     """
     id: str = Field(description='Partner item id')
     quantity: Numeric = Field(description='Item quantity - Basically Decimal<4>')
-    full_price: Numeric = Field(description='Basic price of an item')
+    full_price: Numeric = Field(description='Basic price of an item - Basically Decimal<4>')
     title: Optional[str] = Field(description='Item title')
     stack_price: Optional[Numeric] = Field(description='Resulting price of a full stack')
     stack_full_price: Optional[Numeric] = Field(description='Basic price of a full stack')

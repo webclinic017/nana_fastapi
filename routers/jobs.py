@@ -53,6 +53,9 @@ def token_required(func):
 @router.post("/sync-products", name='Sync WMS Products')
 @token_required
 async def sync_products(request: Request, background_tasks: BackgroundTasks):
+    """
+    Company token required
+    """
     background_tasks.add_task(sync_product_from_wms)
     return {"message": "Notification sent in the background"}
 
@@ -60,6 +63,9 @@ async def sync_products(request: Request, background_tasks: BackgroundTasks):
 @router.get("/get-products", name='Get all products', response_model=List[Product])
 @token_required
 async def get_products(request: Request):
+    """
+    Company token required
+    """
     query = products.select()
     data = await database.fetch_all(query)
     return data

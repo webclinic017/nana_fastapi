@@ -1,5 +1,5 @@
 import datetime
-import re
+import re, json
 from enum import Enum
 from random import randint
 from typing import List
@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, validator, constr, Field
+from pydantic import BaseModel, validator, constr, Field, conint
 from conf.config import settings
 from models.database import database
 import uvicorn
@@ -135,7 +135,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             }})
     )
 
-@app.post('/lavka/v1/integration-entry/v1/order/submit', response_model=OrderResponce, responses={400: {'model': OrderValidationError}})
+@app.post('/lavka/v1/integration-entry/v1/order/submit', response_model=OrderResponce, responses={400: {'model': OrderValidationError}}, name='Order Create')
 async def OrderCreate(order: RequestOrder):
     """
     Creating an order in the yango infrastructure
@@ -164,5 +164,186 @@ async def OrderCreate(order: RequestOrder):
         )
     return resp
 
+class DeliveryType(str, Enum):
+    courier = 'courier'
+    pickup = 'pickup'
+    rover = 'rover'
+
+class OrderStatus(str, Enum):
+    created = 'created'
+    assembling = 'assembling'
+    assembled = 'assembled'
+    performer_found = 'performer_found'
+    delivering = 'delivering'
+    delivery_arrived = 'delivery_arrived'
+    closed = 'closed'
+
+class OrderResolution(str, Enum):
+    succeeded = 'succeeded'
+    canceled = 'canceled'
+    failed = 'failed'
+
+class OrdersStateRequest(BaseModel):
+    user_id: Optional[str]
+    known_orders: list[str]
+
+class OrderActionType(str, Enum):
+    cancel = 'cancel'
+    call_courier = 'call_courier'
+    rover_open_hatch = 'rover_open_hatch'
+
+
+class OrderAction(BaseModel):
+    type: OrderActionType
+
+class CargoDispatchInfo(BaseModel):
+    dispatch_in_batch: Optional[bool]
+    batch_order_num: Optional[int]
+
+class StateCourierInfo(BaseModel):
+    name: Optional[str]
+    transport_type: Optional[str]
+    position: Optional[Point]
+    cargo_dispatch_info: Optional[CargoDispatchInfo]
+    car_number: Optional[str]
+    driver_id: Optional[str]
+
+class OrderInfo(BaseModel):
+    id: str
+    short_order_id: str
+    delivery_type: DeliveryType
+    address: str
+    status: OrderStatus
+    delivery_eta_min: conint(gt=0)
+    resolution: OrderResolution
+    actions: List[OrderAction]
+    courier_info: StateCourierInfo
+    address: Location
+    depot_location: Point
+    promise_max: datetime.datetime
+
+    @staticmethod
+    def get_example():
+        return OrderInfo(**{
+            'id': '3422b448-2460-4fd2-9183-8000de6f8343',
+            'short_order_id': '2000-3213-23',
+            'delivery_type': 'courier',
+            'address': {
+                'position': {'lat': 20, 'lon': 20},
+                'place_id': '2018391'
+            },
+            'status': 'created',
+            'delivery_eta_min': 20,
+            'resolution': 'succeeded',
+
+            'actions': [{'type': 'call_courier'}],
+            'courier_info': {
+                'position': {'lat': 20, 'lon': 20},
+                'cart_id': {
+                    'items': [
+                        {
+                            'id': 'PID10268711',
+                            'quantity': '4',
+                            'full_price': '5.23'
+                        },
+                        {
+                            'id': 'PID10279131',
+                            'quantity': '1',
+                            'full_price': '2.15'
+                        }
+                    ]
+                }
+            },
+            'depot_location': {
+                'lat': 20,
+                'lon': 20
+            },
+            'promise_max': '2022-08-10T16:22:18'
+        })
+
+class OrdersStateResponse(BaseModel):
+    grocery_orders: List[OrderInfo]
+
+    @staticmethod
+    def get_example():
+        return OrdersStateResponse(grocery_orders=[OrderInfo.get_example()])
+
+class EmptyResponse(BaseModel):
+    pass
+
+@app.post('/lavka/v1/integration-entry/v1/order/state', response_model=OrdersStateResponse, responses={400: {'model': OrderValidationError}, 404: {'model': EmptyResponse}}, name='Order State')
+async def OrderState(order: OrdersStateRequest):
+    """
+    Find out the status of the order list
+    """
+    return OrdersStateResponse.get_example()
+
+class CancelOrderReason(BaseModel):
+    type: Optional[constr(max_length=128)]
+
+
+class CancelOrderType(str, Enum):
+    logical = 'logical'
+    user = 'user'
+
+
+class CancelOrderRequest(BaseModel):
+    order_id: str = Field(description='Partner order id')
+    reason: Optional[CancelOrderReason]
+    cancel_type: Optional[CancelOrderType]
+
+    @staticmethod
+    def get_example():
+        return CancelOrderRequest(order_id='3422b448-2460-4fd2-9183-8000de6f8343')
+
+
+@app.post('/lavka/v1/integration-entry/v1/order/actions/cancel', response_model=CancelOrderRequest, status_code=202, responses={400: {'model': EmptyResponse}, 404: {'model': EmptyResponse}}, name='Order Cancel')
+async def OrderState(order: CancelOrderRequest):
+    """
+    Cancel the order
+    """
+
+    return CancelOrderRequest.get_example()
+
+
+class ContactObtainRequest(BaseModel):
+    order_id: str
+
+class ContactObtainResponse(BaseModel):
+    phone: str
+    ext: str
+
+    @staticmethod
+    def get_example():
+        return ContactObtainResponse(phone='+966582904515', ext='231')
+
+@app.post('/lavka/v1/integration-entry/v1/order/contact/obtain', response_model=ContactObtainResponse, responses={404: {'model': EmptyResponse, 'name': 'Order not found'}, 409: {'model': EmptyResponse}}, name='Contact Obtain')
+async def OrderState(order: ContactObtainRequest):
+    """
+    Contact Obtain
+    """
+
+    return ContactObtainResponse.get_example()
+
+class payment_status(str, Enum):
+    success = 'success'
+    fail = 'fail'
+
+class SetPaymentStatus(BaseModel):
+    order_id: str
+    payment_status: Optional[payment_status]
+    payment_type: Optional[PaymentType]
+
+@app.post('/lavka/v1/integration-entry/v1/order/set-payment-status', response_model=OrdersStateResponse, responses={404: {'model': EmptyResponse, 'name': 'Order not found'}}, name='Set Payment Status')
+async def OrderState(order: SetPaymentStatus):
+    """
+    Set Payment Status
+    """
+
+    return OrdersStateResponse.get_example()
+
+
 if __name__ == '__main__':
     uvicorn.run('app:app')
+
+

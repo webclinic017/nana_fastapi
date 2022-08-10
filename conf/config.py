@@ -1,8 +1,8 @@
 from pydantic import BaseSettings
 from functools import lru_cache
 import os
-wms_token = os.getenv("wms_token", "lol")
-wms_url = os.getenv("wms_url", "lol")
+wms_token = os.getenv("wms_token", "wms_token")
+wms_url = os.getenv("wms_url", "wms_url")
 class Settings(BaseSettings):
     app_name: str = "Awesome API"
     admin_email: str = '1@1.ru'

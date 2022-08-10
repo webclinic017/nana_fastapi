@@ -13,6 +13,7 @@ from conf.config import settings
 from models.database import database
 import uvicorn
 from models.order import orders
+from asyncpg.exceptions import UniqueViolationError
 
 app = FastAPI()
 
@@ -122,11 +123,23 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
 
 @app.post('/lavka/v1/integration-entry/v1/order/submit', response_model=OrderResponce)
 async def OrderCreate(order: RequestOrder):
-    a = settings
     dat = datetime.date.today()
     resp = OrderResponce(order_id=f"{dat.strftime('%y%m%d')}-{randint(100000, 999999)}")
-    #query = orders.insert().values(order_id=resp.order_id, created_order_id=order.created_order_id, status='NEW')
-    #last_record_id = await database.execute(query)
+
+    query = orders.insert().values(order_id=resp.order_id, created_order_id=order.created_order_id, status='NEW')
+    try:
+        await database.execute(query)
+    except UniqueViolationError as exc:
+        return JSONResponse(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            content=jsonable_encoder({
+                "code": "grocery_order_id_exists",
+                "message": str(exc),
+                "details": {
+                    "cart": None,
+                    "retry_after": 5
+                }})
+        )
     return resp
 
 if __name__ == '__main__':

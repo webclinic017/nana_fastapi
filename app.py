@@ -46,19 +46,19 @@ class CartItem(BaseModel):
     An item inside a cart
     """
     id: str = Field(description='Partner item id')
-    quantity: Numeric = Field(description='Item quantity - Basically Decimal<4>')
-    full_price: Numeric = Field(description='Basic price of an item - Basically Decimal<4>')
+    quantity: Numeric = Field(description='Item quantity', title='Basically Decimal <4>')
+    full_price: Numeric = Field(description='Basic price of an item', title='Basically Decimal <4>')
     title: Optional[str] = Field(description='Item title')
-    stack_price: Optional[Numeric] = Field(description='Resulting price of a full stack')
-    stack_full_price: Optional[Numeric] = Field(description='Basic price of a full stack')
+    stack_price: Optional[Numeric] = Field(description='Resulting price of a full stack', title='Basically Decimal <4>')
+    stack_full_price: Optional[Numeric] = Field(description='Basic price of a full stack', title='Basically Decimal <4>')
 
     class Config:
         title = 'Cart item'
 
 class Cart(BaseModel):
     items: List[CartItem] = Field(description='Items in a cart')
-    cart_total_cost: Optional[Numeric] = Field(description='Total cost - Basically Decimal<4>')
-    cart_total_discount: Optional[Numeric] = Field(description='Total discount - Basically Decimal<4>')
+    cart_total_cost: Optional[Numeric] = Field(description='Total cost', title='Basically Decimal <4>')
+    cart_total_discount: Optional[Numeric] = Field(description='Total discount', title='Basically Decimal <4>')
 
 
 class PaymentType(str, Enum):

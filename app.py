@@ -133,7 +133,7 @@ async def OrderCreate(order: RequestOrder):
     Need to pass the main parameters,
     - the client,
     - location,
-    - information about the basket,
+    - information about the cart,
     - and other parameters
     """
     dat = datetime.date.today()

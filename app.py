@@ -110,7 +110,7 @@ class RequestOrder(BaseModel):
     use_external_delivery: Optional[bool] = Field(description='Do not use our delivery, only build order')
 
 class OrderResponce(BaseModel):
-    order_id: str
+    order_id: str = Field(description='Yango order id')
     newbie:  bool = False
 
 class OrderValidationErrorDetails(BaseModel):

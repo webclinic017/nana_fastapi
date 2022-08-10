@@ -8,7 +8,7 @@ from fastapi import FastAPI, Request, status
 from fastapi.encoders import jsonable_encoder
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from pydantic import BaseModel, validator, constr
+from pydantic import BaseModel, validator, constr, Field
 from conf.config import settings
 from models.database import database
 import uvicorn
@@ -42,18 +42,23 @@ class Numeric(str):
         yield cls.validate
 
 class CartItem(BaseModel):
-    id: str
-    quantity: Numeric
-    full_price: constr(regex=r'^\d+(\.\d*)?$')
-    title: Optional[str]
-    stack_price: Optional[constr(regex=r'^\d+(\.\d*)?$')]
-    stack_full_price: Optional[constr(regex=r'^\d+(\.\d*)?$')]
+    """
+    An item inside a cart
+    """
+    id: str = Field(description='Partner item id')
+    quantity: Numeric = Field(description='Item quantity - Basically Decimal<4>')
+    full_price: constr(regex=r'^\d+(\.\d*)?$') = Field(description='Basic price of an item')
+    title: Optional[str] = Field(description='Item title')
+    stack_price: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Resulting price of a full stack')
+    stack_full_price: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Basic price of a full stack')
 
+    class Config:
+        title = 'Cart item'
 
 class Cart(BaseModel):
-    items: List[CartItem]
-    cart_total_cost: Optional[constr(regex=r'^\d+(\.\d*)?$')]
-    cart_total_discount: Optional[constr(regex=r'^\d+(\.\d*)?$')]
+    items: List[CartItem] = Field(description='Items in a cart')
+    cart_total_cost: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Total cost - Basically Decimal<4>')
+    cart_total_discount: Optional[constr(regex=r'^\d+(\.\d*)?$')] = Field(description='Total discount - Basically Decimal<4>')
 
 
 class PaymentType(str, Enum):
@@ -62,8 +67,8 @@ class PaymentType(str, Enum):
 
 
 class Point(BaseModel):
-    lat: float
-    lon: float
+    lat: float = Field(description='Latitude')
+    lon: float = Field(description='Latitude')
 
     @validator('lat')
     def lat_min_max(cls, lat):
@@ -79,30 +84,30 @@ class Point(BaseModel):
 
 
 class Location(BaseModel):
-    position: Point
-    place_id: str
-    floor: Optional[str]
-    flat: Optional[str]
-    doorcode: Optional[str]
-    doorcode_extra: Optional[str]
-    entrance: Optional[str]
-    building_name: Optional[str]
-    doorbell_name: Optional[str]
-    left_at_door: Optional[bool]
-    meet_outside: Optional[bool]
-    no_door_call: Optional[bool]
-    postal_code: Optional[str]
-    comment: Optional[str]
+    position: Point = Field(description='Сoordinates of the point')
+    place_id: str = Field(description='URI')
+    floor: Optional[str] = Field(description='Floor number')
+    flat: Optional[str] = Field(description='Flat number')
+    doorcode: Optional[str] = Field(description='Basic intercom code')
+    doorcode_extra: Optional[str] = Field(description='Additional info for intercom')
+    entrance: Optional[str] = Field(description='Entrance')
+    building_name: Optional[str] = Field(description='Name of an apartment complex')
+    doorbell_name: Optional[str] = Field(description='Who do you call in intercom')
+    left_at_door: Optional[bool] = Field(description='Leave order at door')
+    meet_outside: Optional[bool] = Field(description='Courier will be met outside')
+    no_door_call: Optional[bool] = Field(description='Do not use intercom (call by phone instead)')
+    postal_code: Optional[str] = Field(description='For certain countries postal code is very important')
+    comment: Optional[str] = Field(description='Address comment')
 
 
 class RequestOrder(BaseModel):
-    user_id: str
-    user_phone: str
-    cart: Cart
-    payment_type: PaymentType
-    location: Location
-    created_order_id: Optional[str]
-    use_external_delivery: Optional[bool]
+    user_id: str = Field(description='Id of a user who placed an order')
+    user_phone: str = Field(description='User phone numbe')
+    cart: Cart = Field(description='The shopping cart associated with an order')
+    payment_type: PaymentType = Field(description='Payment related to an order')
+    location: Location = Field(description='Location and delivery details')
+    created_order_id: Optional[str] = Field(description='Order id as already created by client system')
+    use_external_delivery: Optional[bool] = Field(description='Do not use our delivery, only build order')
 
 class OrderResponce(BaseModel):
     order_id: str

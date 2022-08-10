@@ -45,6 +45,7 @@ def token_required(func):
         token = request.headers.get('authorization')
         if token:
             if not settings.wms_token in token.split():
+                print(token)
                 raise RequestValidationError(f'Wrong token {token}')
         # my_header will be now available in decorator
         return await func(*args, request, **kwargs)

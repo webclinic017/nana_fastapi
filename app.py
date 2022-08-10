@@ -340,7 +340,7 @@ async def OrderState(order: SetPaymentStatus):
     Set Payment Status
     """
 
-    return {}
+    return JSONResponse({})
 
 
 if __name__ == '__main__':

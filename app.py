@@ -332,7 +332,7 @@ class payment_status(str, Enum):
 class SetPaymentStatus(BaseModel):
     order_id: str
     payment_status: Optional[payment_status]
-    payment_type: Optional[PaymentType]
+    payment_type: Optional[PaymentType] = Field(description='Payment related to an order')
 
 @app.post('/lavka/v1/integration-entry/v1/order/set-payment-status', response_model=OrdersStateResponse, responses={404: {'model': EmptyResponse, 'name': 'Order not found'}}, name='Set Payment Status')
 async def OrderState(order: SetPaymentStatus):
@@ -340,7 +340,7 @@ async def OrderState(order: SetPaymentStatus):
     Set Payment Status
     """
 
-    return OrdersStateResponse.get_example()
+    return {}
 
 
 if __name__ == '__main__':

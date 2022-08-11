@@ -1,13 +1,15 @@
+from functools import wraps
+from typing import List
+
 import aiohttp
+from asyncpg.exceptions import UniqueViolationError
 from fastapi import BackgroundTasks, APIRouter, Request
 from fastapi.exceptions import RequestValidationError
-from asyncpg.exceptions import UniqueViolationError
-from models.database import database
-from functools import wraps
+
 from conf.config import settings
+from models.database import database
 from models.product import products
 from shemas.jobs import Product
-from typing import List
 
 router = APIRouter()
 

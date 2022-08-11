@@ -39,7 +39,10 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
             }})
     )
 
-app.include_router(order_cycle.router)
+app.include_router(
+    order_cycle.router,
+    tags=['OrderCycle']
+)
 app.include_router(
     jobs.router,
     prefix="/jobs",

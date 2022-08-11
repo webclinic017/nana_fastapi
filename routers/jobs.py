@@ -52,7 +52,7 @@ def token_required(func):
     return wrapper
 
 
-@router.post("/sync-products", name='Sync WMS Products')
+@router.post("/sync-products", name='Sync WMS Products', include_in_schema=False)
 @token_required
 async def sync_products(request: Request, background_tasks: BackgroundTasks):
     """
@@ -62,7 +62,7 @@ async def sync_products(request: Request, background_tasks: BackgroundTasks):
     return {"message": "Notification sent in the background"}
 
 
-@router.get("/get-products", name='Get all products', response_model=List[Product])
+@router.get("/get-products", name='Get all products', response_model=List[Product], include_in_schema=False)
 @token_required
 async def get_products(request: Request):
     """

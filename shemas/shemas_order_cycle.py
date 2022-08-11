@@ -42,6 +42,7 @@ class Cart(BaseModel):
     items: List[CartItem] = Field(description='Items in a cart')
     cart_total_cost: Optional[Numeric] = Field(description='Total cost', title='Basically Decimal <4>')
     cart_total_discount: Optional[Numeric] = Field(description='Total discount', title='Basically Decimal <4>')
+    delivery_fee: Optional[Numeric] = Field(description='Delivery_fee', title='Basically Decimal <4>')
 
 
 class PaymentType(str, Enum):
